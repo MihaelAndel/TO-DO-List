@@ -1,0 +1,28 @@
+{
+  "name": "to-do-list",
+  "version": "1.0.0",
+  "description": "TODO list application made using the MERN stack.",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MihaelAndel/TO-DO-List.git"
+  },
+  "author": "Mihael Anđel",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/MihaelAndel/TO-DO-List/issues"
+  },
+  "homepage": "https://github.com/MihaelAndel/TO-DO-List#readme",
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "cors": "^2.8.5",
+    "create-react-app": "^3.2.0",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "moment": "^2.24.0",
+    "mongodb": "^3.3.3"
+  }
+}
