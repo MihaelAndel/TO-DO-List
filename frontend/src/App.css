@@ -1,0 +1,19 @@
+.App {
+	margin-top: 3vh;
+}
+
+.table {
+	width: 95vw;
+	margin: auto;
+}
+
+.sticky-button {
+	font-size: 32px;
+	position: fixed;
+	bottom: 30px;
+	right: 60px;
+}
+
+tr {
+	cursor: pointer;
+}
