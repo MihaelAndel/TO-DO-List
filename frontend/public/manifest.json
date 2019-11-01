@@ -1,0 +1,8 @@
+{
+	"short_name": "TODO List",
+	"name": "TODO List app - add your tasks!",
+	"start_url": ".",
+	"display": "standalone",
+	"theme_color": "#000000",
+	"background_color": "#ffffff"
+}
