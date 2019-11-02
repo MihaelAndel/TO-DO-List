@@ -5,6 +5,7 @@ import Home from './components/home';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
 import Task from './components/task';
+import moment from 'moment';
 
 class App extends React.Component {
 	constructor(props) {
@@ -19,6 +20,11 @@ class App extends React.Component {
 		this.state = {
 			taskList: [],
 			selectedTasks: [],
+			filterId: [],
+			filterTitle: [],
+			filterDescription: [],
+			filterDate: [],
+			visibleTasks: [],
 
 			//Ova stanja koriste se za pamćenje
 			//prethodnog smjera sortiranja pojedinog polja.
@@ -35,11 +41,15 @@ class App extends React.Component {
 		this.addNewTask = this.addNewTask.bind(this);
 		this.editTask = this.editTask.bind(this);
 
-		//Metode za sortiranje sadržaja
+		//Metode za sortiranje i filtriranje sadržaja
 		this.sortID = this.sortID.bind(this);
 		this.sortTitle = this.sortTitle.bind(this);
 		this.sortDescription = this.sortDescription.bind(this);
 		this.sortDate = this.sortDate.bind(this);
+		this.filterId = this.filterId.bind(this);
+		this.filterTitle = this.filterTitle.bind(this);
+		this.filterDescription = this.filterDescription.bind(this);
+		this.filterDate = this.filterDate.bind(this);
 
 		//Metode vezane uz označavanje zadataka za brisanje.
 		this.selectTask = this.selectTask.bind(this);
@@ -61,7 +71,7 @@ class App extends React.Component {
 						url za otvaranje određene stranice u paginaciji tablice */}
 						<Route path="/home/:page">
 							<Home
-								tasks={this.state.taskList}
+								tasks={this.state.visibleTasks}
 								addTask={this.addNewTask}
 								editTask={this.editTask}
 								sortID={this.sortID}
@@ -72,6 +82,10 @@ class App extends React.Component {
 								selectTask={this.selectTask}
 								deselectTask={this.deselectTask}
 								deleteTasks={this.deleteTasks}
+								filterId={this.filterId}
+								filterTitle={this.filterTitle}
+								filterDescription={this.filterDescription}
+								filterDate={this.filterDate}
 							/>
 						</Route>
 						{/* Ruta za detaljni prikaz zadatka.
@@ -81,7 +95,7 @@ class App extends React.Component {
 								getTasks={this.getTasks}
 								editTask={this.editTask}
 								deleteTasks={this.deleteTasks}
-								tasks={this.state.taskList}></Task>
+								tasks={this.state.visibleTasks}></Task>
 						</Route>
 						<Route path="/">
 							<Redirect to="/home/1" />
@@ -96,7 +110,12 @@ class App extends React.Component {
 		//Jednostavno dohvaćanje svih zadataka iz baze.
 		let tasks = await Axios.get('/get-all-tasks');
 		this.setState({
-			taskList: tasks.data
+			taskList: tasks.data,
+			visibleTasks: tasks.data,
+			filterId: tasks.data,
+			filterTitle: tasks.data,
+			filterDescription: tasks.data,
+			filterDate: tasks.data
 		});
 	}
 
@@ -106,7 +125,8 @@ class App extends React.Component {
 		let tasks = this.state.taskList;
 		tasks.push(task);
 		this.setState({
-			taskList: tasks
+			taskList: tasks,
+			visibleTasks: tasks
 		});
 	}
 
@@ -118,7 +138,8 @@ class App extends React.Component {
 		tasks[taskIndex] = editedTask;
 
 		this.setState({
-			taskList: tasks
+			taskList: tasks,
+			visibleTasks: tasks
 		});
 	}
 
@@ -137,7 +158,8 @@ class App extends React.Component {
 		//Deselektirani zadatak miče se iz array-a.
 		tasks.splice(taskIndex, 1);
 		this.setState({
-			selectedTasks: tasks
+			selectedTasks: tasks,
+			visibleTasks: tasks
 		});
 	}
 
@@ -148,7 +170,8 @@ class App extends React.Component {
 		const newTasks = allTasks.filter(task => !tasksToDelete.includes(task));
 		this.setState({
 			selectedTasks: [],
-			taskList: newTasks
+			taskList: newTasks,
+			visibleTasks: newTasks
 		});
 	}
 
@@ -156,7 +179,7 @@ class App extends React.Component {
 	//Sav sadržaj se lokalno sortira, tako da se
 	//ne povlači sadržaj iz baze pri svakom sortiranju.
 	sortID() {
-		let tasks = this.state.taskList;
+		let tasks = this.state.visibleTasks;
 		let direction = this.state.idSort === 0 ? 1 : 0;
 
 		if (this.state.idSort) {
@@ -165,13 +188,13 @@ class App extends React.Component {
 			tasks.sort((a, b) => b._id - a._id);
 		}
 		this.setState({
-			taskList: tasks,
+			visibleTasks: tasks,
 			idSort: direction
 		});
 	}
 
 	sortTitle() {
-		let tasks = this.state.taskList;
+		let tasks = this.state.visibleTasks;
 		let direction = this.state.titleSort === 0 ? 1 : 0;
 
 		if (this.state.titleSort) {
@@ -180,13 +203,13 @@ class App extends React.Component {
 			tasks.sort((a, b) => (a.title > b.title ? -1 : b.title > a.title ? 1 : 0));
 		}
 		this.setState({
-			taskList: tasks,
+			visibleTasks: tasks,
 			titleSort: direction
 		});
 	}
 
 	sortDescription() {
-		let tasks = this.state.taskList;
+		let tasks = this.state.visibleTasks;
 		let direction = this.state.descriptionSort === 0 ? 1 : 0;
 
 		if (this.state.descriptionSort) {
@@ -199,13 +222,13 @@ class App extends React.Component {
 			);
 		}
 		this.setState({
-			taskList: tasks,
+			visibleTasks: tasks,
 			descriptionSort: direction
 		});
 	}
 
 	sortDate() {
-		let tasks = this.state.taskList;
+		let tasks = this.state.visibleTasks;
 		let direction = this.state.dateSort === 0 ? 1 : 0;
 
 		if (!this.state.dateSort) {
@@ -214,8 +237,139 @@ class App extends React.Component {
 			tasks.sort((a, b) => b.dateCreated - a.dateCreated);
 		}
 		this.setState({
-			taskList: tasks,
+			visibleTasks: tasks,
 			dateSort: direction
+		});
+	}
+
+	//Metode za filtriranje po svakom pojedinom polju.
+	//Metode su jako jako slične, ali ne vidim način
+	//na koji bih mogao ponovno iskoristiti određen dio koda.
+	//Priznajem da su metode grozne za čitati, ali filtriranje radi.
+
+	//Svaka metoda prvo provjerava radi li se o praznom polju.
+	//Ako se radi o praznom stringu, svi zadaci ubacuju se u stanje filtiranja za to polje.
+	//Ako je unesen nekakav string, tada se u stanje filtriranja tog polja ubacuju svi zadaci koji sadrže
+	//unesen string kao podstring tog polja. Na kraju svake metode poziva se metoda koja radi presjek svih
+	//filtriranih zadataka kako bi se zadaci na korektan način prikazali u tablici.
+	//Ukratko, filtriranje je moguće napraviti unosom bilo koje kombinacije vrijednosti u bilo koja polja.
+	filterId(text) {
+		const query = parseInt(text);
+		const allTasks = this.state.taskList;
+
+		if (text === '') {
+			this.setState(
+				{
+					filterId: allTasks
+				},
+				() => this.showTasks()
+			);
+			return;
+		}
+
+		const filteredTasks = allTasks.filter(task => {
+			return task._id === query;
+		});
+
+		this.setState(
+			{
+				filterId: filteredTasks
+			},
+			() => this.showTasks()
+		);
+	}
+
+	filterTitle(text) {
+		const allTasks = this.state.taskList;
+		const query = text;
+
+		if (text === '') {
+			this.setState(
+				{
+					filterTitle: allTasks
+				},
+				() => this.showTasks()
+			);
+			return;
+		}
+
+		const filteredTasks = allTasks.filter(task => {
+			return task.title.indexOf(query) > -1;
+		});
+
+		this.setState(
+			{
+				filterTitle: filteredTasks
+			},
+			() => this.showTasks()
+		);
+	}
+
+	filterDescription(text) {
+		const query = text;
+		const allTasks = this.state.taskList;
+
+		if (text === '') {
+			this.setState(
+				{
+					filterDescription: allTasks
+				},
+				() => this.showTasks()
+			);
+			return;
+		}
+
+		const filteredTasks = allTasks.filter(task => {
+			return task.description.indexOf(query) > -1;
+		});
+
+		this.setState(
+			{
+				filterDescription: filteredTasks
+			},
+			() => this.showTasks()
+		);
+	}
+
+	filterDate(text) {
+		const query = text;
+		const allTasks = this.state.taskList;
+
+		if (text === '') {
+			this.setState(
+				{
+					filterDate: allTasks
+				},
+				() => this.showTasks()
+			);
+			return;
+		}
+
+		const filteredTasks = allTasks.filter(task => {
+			const date = moment(task.dateCreated).format('LLL');
+			return date.indexOf(query) > -1;
+		});
+
+		this.setState(
+			{
+				filterDate: filteredTasks
+			},
+			() => this.showTasks()
+		);
+	}
+
+	//Metoda koja se poziva nakon filtriranja zadataka po bilo kojem polju.
+	//Metoda radi presjek svih array-a i postavlja dobivenu vrijednost u stanje
+	//zadataka za prikazivanje. Presjek array-a radi se na način da se funkcijom
+	//'filter' filtriraju svi zadaci koji pripadaju svim ostalim array-ima
+	showTasks() {
+		const tasksToShow = this.state.filterId
+			.filter(taskId => this.state.filterTitle.includes(taskId))
+			.filter(taskTitle => this.state.filterDescription.includes(taskTitle))
+			.filter(taskDescription => this.state.filterDate.includes(taskDescription));
+
+		this.setState({
+			visibleTasks: tasksToShow
 		});
 	}
 }

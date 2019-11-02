@@ -1,6 +1,6 @@
 import React from 'react';
 import TaskRow from '../components/task-row';
-import { Table } from 'react-bootstrap';
+import { Table, Form } from 'react-bootstrap';
 
 //Komponenta koja predstavlja tablicu koja prikazuje sve zadatke.
 //Svakom dijelu headera dodaje se onClick event handler koji
@@ -23,6 +23,35 @@ function TaskTable(props) {
 					</th>
 					<th onClick={props.sortDate} scope="col">
 						Time created
+					</th>
+					<th></th>
+					<th></th>
+					<th></th>
+				</tr>
+				<tr>
+					<th>
+						<Form.Control
+							onChange={event => {
+								props.filterId(event.target.value);
+							}}></Form.Control>
+					</th>
+					<th>
+						<Form.Control
+							onChange={event => {
+								props.filterTitle(event.target.value);
+							}}></Form.Control>
+					</th>
+					<th>
+						<Form.Control
+							onChange={event => {
+								props.filterDescription(event.target.value);
+							}}></Form.Control>
+					</th>
+					<th>
+						<Form.Control
+							onChange={event => {
+								props.filterDate(event.target.value);
+							}}></Form.Control>
 					</th>
 					<th scope="col" className="table-button">
 						&#9998;

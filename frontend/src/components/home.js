@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import TaskTable from './task-table';
 import AddTask from './add-task';
 import DeleteModal from './delete-modal';
-import { Pagination, Container, PageItem } from 'react-bootstrap';
+import { Pagination, Container, Form } from 'react-bootstrap';
 import { NavLink, useParams, useHistory } from 'react-router-dom';
 
 //Ova komponenta predstavlja glavni pogled koji se prikazuje nakon otvaranja aplikacije.
@@ -49,7 +49,11 @@ function Home(props) {
 				sortDate={props.sortDate}
 				selectTask={props.selectTask}
 				deselectTask={props.deselectTask}
-				editTask={props.editTask}></TaskTable>
+				editTask={props.editTask}
+				filterId={props.filterId}
+				filterTitle={props.filterTitle}
+				filterDescription={props.filterDescription}
+				filterDate={props.filterDate}></TaskTable>
 			<AddTask addTask={props.addTask} />
 			<Container>
 				<Pagination className="pagination-bar" size="lg">
