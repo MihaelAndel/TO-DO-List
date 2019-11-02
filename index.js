@@ -4,10 +4,10 @@ const bodyParser = require('body-parser');
 const app = express();
 const MongoClient = require('mongodb').MongoClient;
 const cors = require('cors');
-const moment = require('moment');
 
 app.use(cors());
 app.use(bodyParser());
+app.use(express.static('./frontend/public'));
 
 //Stvaranje objekta koji predstavlja jedan MongoDB klijent koji se može spojiti na bazu.
 //Connection string spremljen je u .env datoteci.
@@ -31,8 +31,26 @@ client
 			res.json(allTasks);
 		});
 
+		//Ruta za dohvaćanje pojedinog zadatka ovisno o poslanom id-u.
+		//Koristi se kod detaljnog prikaza zadatka.
+		app.get('/get-task', async (req, res, next) => {
+			const id = req.query.id;
+			console.log(id);
+			const result = await tasks.findOne({ _id: parseInt(id) });
+			res.json(result);
+		});
+
 		//Ruta za zapisivanje novog zadatka.
 		app.post('/post-task', async (req, res, next) => {
+			//Radi preglednosti, aplikacija, umjesto ObjectId vrijednosti,
+			//koristi int vrijednosti za id atribut zadatka.
+			//Ovdje se prvo pronalazi najveći postojeći id u bazi.
+			//Nakon toga se ta vrijednost inkrementira i
+			//postaje id vrijednost novog zapisa.
+			//Iskreno, ne znam zašto sam to ovako učinio.
+			//Znam da to definitivno, apsolutno nije dobra praksa,
+			//ali mi se nije svidjelo da u tablici bude random string koji
+			//predstavlja id zadatka.
 			const newestTask = await tasks
 				.find({})
 				.sort({ _id: -1 })
@@ -42,8 +60,8 @@ client
 			//Izračun ID-a novog dokumenta
 			const newId = newestTask.length === 0 ? 1 : newestTask[0]._id + 1;
 
-			//Moment.js biblioteka koristi se radi laganog formatiranja datuma i vremena.
-			const date = moment().format('MMMM Do YYYY, h:mm:ss a');
+			//Trenutno vrijeme u Unix timestamp obliku.
+			const date = Date.now();
 
 			const newTask = {
 				_id: newId,
@@ -68,10 +86,39 @@ client
 		});
 
 		//Ruta za ažuriranje postojećeg zadatka.
-		app.post('/update-task', async (req, res, next) => {});
+		app.post('/update-task', async (req, res, next) => {
+			//Ovjde se prima id zadatka, radi njegovo pronalaženja
+			//i novi tekst i naslov zadatka za ažuriranje.
+			taskId = req.body.id;
+			taskTitle = req.body.title;
+			taskDescription = req.body.description;
+
+			const result = await tasks.updateOne(
+				{ _id: taskId },
+				{ $set: { title: taskTitle, description: taskDescription } }
+			);
+
+			if (result.modifiedCount === 1) {
+				res.json('ok');
+			} else {
+				res.json('error');
+			}
+		});
 
 		//Ruta za brisanje zadataka.
-		app.post('/delete-task', async (req, res, next) => {});
+		app.post('/delete-tasks', async (req, res, next) => {
+			//Ovdje se prima array zadataka, no to ne isključuje
+			//mogućnost da se u array-u nalazi samo jedan zadatak.
+			const tasksToDelete = req.body.tasks;
+			const taskIds = tasksToDelete.map(task => task._id);
+			const result = await tasks.deleteMany({ _id: { $in: taskIds } });
+			if (result.result.ok === 1) {
+				console.log('dobro je');
+				res.json('ok');
+			} else {
+				res.json('error');
+			}
+		});
 	})
 	.catch(error => {
 		console.error(error.message);
