@@ -15,9 +15,19 @@ function AddTask(props) {
 	const [taskDescription, setDescription] = useState('');
 
 	const closeModal = () => setShow(false);
-	const showModal = () => setShow(true);
-
-	const addTask = async () => {
+	const showModal = () => {
+		setTitle('');
+		setDescription('');
+		setShow(true);
+	};
+	const addTask = async event => {
+		console.log('tu sam add');
+		const form = event.currentTarget;
+		if (form.checkValidity() === false) {
+			event.preventDefault();
+			event.stopPropagation();
+			return;
+		}
 		try {
 			var response = await Axios.post('/post-task', {
 				title: taskTitle,
@@ -50,37 +60,45 @@ function AddTask(props) {
 
 	return (
 		<div>
-			<button onClick={showModal} className=" btn btn-dark sticky-button">
-				+
-			</button>
+			{/*Gumb koji otvara Modal prozor za dodavanje zadatka*/}
+			<Button onClick={showModal} variant="success" className="add-button">
+				&#10133;
+			</Button>
+
 			<Modal show={show} onHide={closeModal}>
 				<Modal.Header closeButton>
 					<Modal.Title>Add new task</Modal.Title>
 				</Modal.Header>
 
-				<Modal.Body>
-					<Form>
+				<Form validated onSubmit={addTask}>
+					<Modal.Body>
 						<Form.Label className="text-muted">Task title</Form.Label>
 						<Form.Control
+							type="text"
+							required
 							onChange={e => setTitle(e.target.value)}
 							type="text"
-							placeholder="Title"></Form.Control>
+							placeholder="Title"
+							value={taskTitle}></Form.Control>
 						<Form.Label className="text-muted">Task description</Form.Label>
 						<Form.Control
+							type="text"
+							required
 							onChange={e => setDescription(e.target.value)}
 							type="text"
-							placeholder="Description"></Form.Control>
-					</Form>
-				</Modal.Body>
+							placeholder="Description"
+							value={taskDescription}></Form.Control>
+					</Modal.Body>
 
-				<Modal.Footer>
-					<Button onClick={closeModal} variant="secondary">
-						Close
-					</Button>
-					<Button onClick={addTask} type="submit" variant="primary">
-						Add task
-					</Button>
-				</Modal.Footer>
+					<Modal.Footer>
+						<Button onClick={closeModal} variant="secondary">
+							Close
+						</Button>
+						<Button type="submit" variant="primary">
+							Add task
+						</Button>
+					</Modal.Footer>
+				</Form>
 			</Modal>
 		</div>
 	);
