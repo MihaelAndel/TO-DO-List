@@ -146,9 +146,9 @@ class App extends React.Component {
 	selectTask(task) {
 		//Odabrani zadatak dodaje se u array odabranih
 		//zadataka koji se nalazi u stanju aplikacije.
-		let selectedTasks = this.state.selectedTasks;
+		const selectedTasks = this.state.selectedTasks;
 		selectedTasks.push(task);
-		this.setState({ selectedTasks });
+		this.setState({ selectedTasks: selectedTasks });
 	}
 
 	deselectTask(deselectedTask) {
@@ -158,8 +158,7 @@ class App extends React.Component {
 		//Deselektirani zadatak miče se iz array-a.
 		tasks.splice(taskIndex, 1);
 		this.setState({
-			selectedTasks: tasks,
-			visibleTasks: tasks
+			selectedTasks: tasks
 		});
 	}
 
