@@ -34,7 +34,6 @@ client
 		//Koristi se kod detaljnog prikaza zadatka.
 		app.get('/get-task', async (req, res, next) => {
 			const id = req.query.id;
-			console.log(id);
 			const result = await tasks.findOne({ _id: parseInt(id) });
 			res.json(result);
 		});
@@ -112,7 +111,6 @@ client
 			const taskIds = tasksToDelete.map(task => task._id);
 			const result = await tasks.deleteMany({ _id: { $in: taskIds } });
 			if (result.result.ok === 1) {
-				console.log('dobro je');
 				res.json('ok');
 			} else {
 				res.json('error');
