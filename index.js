@@ -7,7 +7,6 @@ const cors = require('cors');
 
 app.use(cors());
 app.use(bodyParser());
-app.use(express.static('./frontend/public'));
 
 //Stvaranje objekta koji predstavlja jedan MongoDB klijent koji se može spojiti na bazu.
 //Connection string spremljen je u .env datoteci.
