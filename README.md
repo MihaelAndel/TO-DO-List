@@ -24,3 +24,5 @@ u root direktoriju i frontend React aplikaciju naredbom
 u ./frontend direktoriju.
 <br />
 Vrijeme rješavanja zadatka (aproksimacija): 6h-7h.
+
+Napomena: po defaultu se za express server koristi port 5000, dok se za React aplikaciju koristi port 3000.
