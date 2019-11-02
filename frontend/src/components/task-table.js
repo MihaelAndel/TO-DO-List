@@ -12,16 +12,16 @@ function TaskTable(props) {
 		<Table striped>
 			<thead className="thead-dark">
 				<tr>
-					<th onClick={props.sortID} scope="col">
+					<th onClick={props.sortID} className="id" scope="col">
 						ID
 					</th>
-					<th onClick={props.sortTitle} scope="col">
+					<th onClick={props.sortTitle} className="title" scope="col">
 						Title
 					</th>
-					<th onClick={props.sortDescription} scope="col">
+					<th onClick={props.sortDescription} className="description" scope="col">
 						Description
 					</th>
-					<th onClick={props.sortDate} scope="col">
+					<th onClick={props.sortDate} className="date" scope="col">
 						Time created
 					</th>
 					<th></th>
