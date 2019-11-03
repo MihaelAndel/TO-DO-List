@@ -43,10 +43,15 @@ function Home(props) {
 		<div>
 			<TaskTable
 				tasks={tasksToShow}
+				selectedTasks={props.selectedTasks}
 				sortID={props.sortID}
+				idDirection={props.idDirection}
 				sortTitle={props.sortTitle}
+				titleDirection={props.titleDirection}
 				sortDescription={props.sortDescription}
+				descriptionDirection={props.descriptionDirection}
 				sortDate={props.sortDate}
+				dateDirection={props.dateDirection}
 				selectTask={props.selectTask}
 				deselectTask={props.deselectTask}
 				editTask={props.editTask}
@@ -64,6 +69,7 @@ function Home(props) {
 				deleteTasks={props.deleteTasks}
 				tasks={props.selectedTasks}
 				callback={() => {
+					//Prazna funkcija jer callback ovdje nije potreban.
 					return;
 				}}
 			/>

@@ -1,12 +1,13 @@
 import React from 'react';
 import TaskRow from '../components/task-row';
 import { Table, Form } from 'react-bootstrap';
+import Symbol from './symbol';
 
 //Komponenta koja predstavlja tablicu koja prikazuje sve zadatke.
 //Svakom dijelu headera dodaje se onClick event handler koji
 //sortira podatke ovisno o kliknutom polju.
-//Ovdje se ništa posebno ne događa, pa nemam daljnih komentara.
-
+//Koristi se komponenta Symbol kako bi se mogli prikazati posebni UTF8
+//simboli za indikatore usmjerenja sortiranja određenog polja.
 function TaskTable(props) {
 	return (
 		<Table striped>
@@ -14,15 +15,23 @@ function TaskTable(props) {
 				<tr>
 					<th onClick={props.sortID} className="id" scope="col">
 						ID
+						{props.idDirection === 0 ? <Symbol symbol="&#8593;" /> : <Symbol symbol="&#8595;" />}
 					</th>
 					<th onClick={props.sortTitle} className="title" scope="col">
 						Title
+						{props.titleDirection === 0 ? <Symbol symbol="&#8593;" /> : <Symbol symbol="&#8595;" />}
 					</th>
 					<th onClick={props.sortDescription} className="description" scope="col">
 						Description
+						{props.descriptionDirection === 0 ? (
+							<Symbol symbol="&#8593;" />
+						) : (
+							<Symbol symbol="&#8595;" />
+						)}
 					</th>
 					<th onClick={props.sortDate} className="date" scope="col">
 						Time created
+						{props.dateDirection === 0 ? <Symbol symbol="&#8593;" /> : <Symbol symbol="&#8595;" />}
 					</th>
 					<th></th>
 					<th></th>
@@ -72,6 +81,7 @@ function TaskTable(props) {
 						deselectTask={props.deselectTask}
 						key={task._id}
 						task={task}
+						selected={props.selectedTasks.includes(task) ? true : false}
 					/>
 				))}
 			</tbody>
