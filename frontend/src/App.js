@@ -28,10 +28,10 @@ class App extends React.Component {
 
 			//Ova stanja koriste se za pamćenje
 			//prethodnog smjera sortiranja pojedinog polja.
-			idSort: 0,
-			titleSort: 0,
-			descriptionSort: 0,
-			dateSort: 0
+			idDirection: 0,
+			titleDirection: 0,
+			descriptionDirection: 0,
+			dateDirection: 0
 		};
 
 		this.getTasks = this.getTasks.bind(this);
@@ -75,9 +75,13 @@ class App extends React.Component {
 								addTask={this.addNewTask}
 								editTask={this.editTask}
 								sortID={this.sortID}
+								idDirection={this.state.idDirection}
 								sortTitle={this.sortTitle}
+								titleDirection={this.state.titleDirection}
 								sortDescription={this.sortDescription}
+								descriptionDirection={this.state.descriptionDirection}
 								sortDate={this.sortDate}
+								dateDirection={this.state.dateDirection}
 								selectedTasks={this.state.selectedTasks}
 								selectTask={this.selectTask}
 								deselectTask={this.deselectTask}
@@ -112,6 +116,9 @@ class App extends React.Component {
 		this.setState({
 			taskList: tasks.data,
 			visibleTasks: tasks.data,
+
+			//Početna stanja za filtiranje kako
+			//bi se mogao izračunati njihov presjek.
 			filterId: tasks.data,
 			filterTitle: tasks.data,
 			filterDescription: tasks.data,
@@ -179,39 +186,39 @@ class App extends React.Component {
 	//ne povlači sadržaj iz baze pri svakom sortiranju.
 	sortID() {
 		let tasks = this.state.visibleTasks;
-		let direction = this.state.idSort === 0 ? 1 : 0;
+		let direction = this.state.idDirection === 0 ? 1 : 0;
 
-		if (this.state.idSort) {
+		if (this.state.idDirection) {
 			tasks.sort((a, b) => a._id - b._id);
 		} else {
 			tasks.sort((a, b) => b._id - a._id);
 		}
 		this.setState({
 			visibleTasks: tasks,
-			idSort: direction
+			idDirection: direction
 		});
 	}
 
 	sortTitle() {
 		let tasks = this.state.visibleTasks;
-		let direction = this.state.titleSort === 0 ? 1 : 0;
+		let direction = this.state.titleDirection === 0 ? 1 : 0;
 
-		if (this.state.titleSort) {
+		if (this.state.titleDirection) {
 			tasks.sort((a, b) => (a.title > b.title ? 1 : b.title > a.title ? -1 : 0));
 		} else {
 			tasks.sort((a, b) => (a.title > b.title ? -1 : b.title > a.title ? 1 : 0));
 		}
 		this.setState({
 			visibleTasks: tasks,
-			titleSort: direction
+			titleDirection: direction
 		});
 	}
 
 	sortDescription() {
 		let tasks = this.state.visibleTasks;
-		let direction = this.state.descriptionSort === 0 ? 1 : 0;
+		let direction = this.state.descriptionDirection === 0 ? 1 : 0;
 
-		if (this.state.descriptionSort) {
+		if (this.state.descriptionDirection) {
 			tasks.sort((a, b) =>
 				a.description > b.description ? 1 : b.description > a.description ? -1 : 0
 			);
@@ -222,22 +229,22 @@ class App extends React.Component {
 		}
 		this.setState({
 			visibleTasks: tasks,
-			descriptionSort: direction
+			descriptionDirection: direction
 		});
 	}
 
 	sortDate() {
 		let tasks = this.state.visibleTasks;
-		let direction = this.state.dateSort === 0 ? 1 : 0;
+		let direction = this.state.dateDirection === 0 ? 1 : 0;
 
-		if (!this.state.dateSort) {
+		if (!this.state.dateDirection) {
 			tasks.sort((a, b) => a.dateCreated - b.dateCreated);
 		} else {
 			tasks.sort((a, b) => b.dateCreated - a.dateCreated);
 		}
 		this.setState({
 			visibleTasks: tasks,
-			dateSort: direction
+			dateDirection: direction
 		});
 	}
 

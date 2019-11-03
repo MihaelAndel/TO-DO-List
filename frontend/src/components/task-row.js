@@ -9,9 +9,8 @@ import { Link } from 'react-router-dom';
 //Osim prikaza pojedinog zadatka, ona se sastoji od komponente za
 //ažuriranje zadatka i dva gumba. Jedan gumb otvara detaljni prikaz zadatka,
 //dok drugi označava zadatak.
-
 function TaskRow(props) {
-	const [selected, setSelected] = useState(false);
+	const [selected, setSelected] = useState(props.selected);
 
 	const toggleSelect = () => {
 		if (selected) {
