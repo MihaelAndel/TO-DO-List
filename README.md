@@ -25,4 +25,4 @@ u ./frontend direktoriju.
 <br />
 Vrijeme rješavanja zadatka (aproksimacija): 7h-8h.
 
-Napomena: po defaultu se za express server koristi port 5000, dok se za React aplikaciju koristi port 3000.
+Napomena: po defaultu se za express server koristi port 5001, dok se za React aplikaciju koristi port 3000.
